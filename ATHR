@@ -1,0 +1,53 @@
+import cv2
+import mediapipe as mp
+import keyboard
+
+# Initialize MediaPipe
+mp_drawing = mp.solutions.drawing_utils
+mp_hands = mp.solutions.hands
+hands = mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.5)
+
+# Access the webcam
+cap = cv2.VideoCapture(0)
+
+# Create a named window for display
+cv2.namedWindow('Hand Detection')
+
+# Initialize a flag to track if the key has been pressed
+key_pressed = False
+
+while cap.isOpened():
+    success, image = cap.read()
+    if not success:
+        print("Ignoring empty camera frame.")
+        continue
+
+    image.flags.writeable = False
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    results = hands.process(image)
+
+    image.flags.writeable = True
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+    if results.multi_hand_landmarks:
+        for hand_landmarks in results.multi_hand_landmarks:
+            # Draw a green rectangle around the detected hand
+            x_min = min([lm.x for lm in hand_landmarks.landmark])
+            x_max = max([lm.x for lm in hand_landmarks.landmark])
+            y_min = min([lm.y for lm in hand_landmarks.landmark])
+            y_max = max([lm.y for lm in hand_landmarks.landmark])
+            cv2.rectangle(image, (int(x_min), int(y_min)), (int(x_max), int(y_max)), (0, 255, 0), 2)
+
+            mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+
+            # Simulate left alt and tab keys being pressed
+            if not key_pressed:
+                keyboard.press_and_release('alt+tab')
+                key_pressed = True
+
+    cv2.imshow('Hand Detection', image)
+    if cv2.waitKey(5) & 0xFF == 27:  # Exit on 'Esc' key press
+        break
+
+cap.release()
+cv2.destroyAllWindows()
