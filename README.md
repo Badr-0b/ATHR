@@ -6,7 +6,7 @@ this code utilizes the mediapipe, keyboard and cv2 libraries to recognize the hu
 upon the recognition of a human hand appearing on screen, the left alt + tab key combo is stimulated simultaneously ONCE
 thus as a result switching from whatever program i have active currently on screen and opening a different tab altogether
 
-useful for when pretending to study but parents walk in and you cant read the alt tab key's on time.
+useful for when pretending to study but parents walk in and you cant reach the alt tab key's on time.
 
 anyways, heres the flowchart i made using plantUML for this code.
 
